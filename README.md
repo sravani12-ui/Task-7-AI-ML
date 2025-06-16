@@ -1,38 +1,43 @@
-Fake News Detection Model
-This project uses machine learning techniques to classify news articles as either real or fake based on text data. Leveraging Natural Language Processing (NLP) techniques and a machine learning classifier, this model helps in identifying misinformation from reliable news sources.
+# Fake News Detection Model
 
-Overview
-The model uses the TF-IDF (Term Frequency-Inverse Document Frequency) vectorization method to convert text data into numerical features and a Linear Support Vector Classifier (LinearSVC) to classify news articles. With an accuracy of approximately 99%, this model provides a solid baseline for detecting fake news.
+This project uses machine learning techniques to classify news articles as either *real* or *fake* based on text data. Leveraging Natural Language Processing (NLP) techniques and a machine learning classifier, this model helps in identifying misinformation from reliable news sources.
 
-Dataset
+## Overview
+The model uses the **TF-IDF** (Term Frequency-Inverse Document Frequency) vectorization method to convert text data into numerical features and a **Linear Support Vector Classifier (LinearSVC)** to classify news articles. With an accuracy of approximately 99%, this model provides a solid baseline for detecting fake news.
+
+## Dataset
 The dataset consists of two classes:
+- **Real**: Legitimate news articles
+- **Fake**: Misinformation or unreliable news articles
+- **Text**: The news article text.
+- **Label**: The classification label (Real/Fake).
 
-Real: Legitimate news articles
-Fake: Misinformation or unreliable news articles
-Text: The news article text.
-Label: The classification label (Real/Fake).
-Data Distribution
+### Data Distribution
 A bar chart visualizing class distribution is provided to show the balance between real and fake news articles in the dataset.
 
-DD
+![DD](Image/class_distribution.png)
 
-Dependencies
+## Dependencies
 To run this project, ensure you have the following libraries installed:
+- `pandas`
+- `scikit-learn`
+- `seaborn`
+- `matplotlib`
 
-pandas
-scikit-learn
-seaborn
-matplotlib
 Install dependencies using:
-
+```bash
 pip install -r requirements.txt
-Model Training and Evaluation
-TF-IDF Vectorization: Converts the article text into a numerical format suitable for machine learning.
-Model Training: A LinearSVC model is trained on the vectorized data.
-Evaluation: The model is evaluated using accuracy and classification metrics, along with a confusion matrix for visual representation.
-Key Code Sections:
-Import required librariess
+```
+## Model Training and Evaluation
 
+1. TF-IDF Vectorization: Converts the article text into a numerical format suitable for machine learning.
+2. Model Training: A LinearSVC model is trained on the vectorized data.
+3. Evaluation: The model is evaluated using accuracy and classification metrics, along with a confusion matrix for visual representation.
+
+# Key Code Sections:
+**Import required librariess**
+
+```bash
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -40,27 +45,34 @@ from sklearn.svm import LinearSVC
 from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
 import matplotlib.pyplot as plt
 import seaborn as sns
-Data Loading:
+```
+### Data Loading:
+```bash
 # Load dataset
 df = pd.read_csv('/content/fake_and_real_news.csv')
-Dataset Size Check
+```
+**Dataset Size Check**
 
-df.shape, shows the dimensions of the dataset (number of rows and columns). It helps us understand the dataset's size.
-
+ df.shape, shows the dimensions of the dataset (number of rows and columns). It helps us understand the dataset's size.
+ ```bash
 df.shape
-output: (9900, 2) #9900 data and 2 column
+ ```
+output: (9900, 2) #9900 data and 2 column 
 
-First five row:
+**First five row:**
 
-df
+![df](Image/dataset.png)
 
-Splitting Data for Training and Testing
+## Splitting Data for Training and Testing
 This code splits the data into training and testing sets, with 80% for training and 20% for testing. The split is done randomly, but the random_state=0 ensures consistent results each time.
 
+```bash
 from sklearn.model_selection import train_test_split
 X_train,X_test,Y_train,Y_test=train_test_split(X,Y,test_size=0.2,random_state=0)
+```
 Display a pie chart showing the percentage of data used for training and testing, helping you visualize the split.
 
+```bash
 import matplotlib.pyplot as plt
 
 # Plot the proportion of training and testing data
@@ -70,46 +82,63 @@ plt.pie(sizes, labels=labels, autopct='%1.1f%%', startangle=90)
 plt.title('Train-Test Split Proportion')
 plt.savefig('/content/train_test_split.png')
 plt.show()
-pie
+```
+![pie](Image/train_test_split.png)
 
-Importing SVM and Classifier
+## Importing SVM and Classifier
+
 imports two classification models:
+- LinearSVC is used for linear support vector classification.
+- SGDClassifier is used for classification with stochastic gradient descent.
 
-LinearSVC is used for linear support vector classification.
-SGDClassifier is used for classification with stochastic gradient descent.
+```bash
 from sklearn.svm import LinearSVC
 from sklearn.linear_model import SGDClassifier
-TF-IDF Transformation:
+```
+
+## TF-IDF Transformation:
 TF-IDF Vectorizer that converts text into numerical features. It limits the features to the top 5000 most important words based on TF-IDF scores. It then transforms the test data using the same fitted vectorizer.
 
+```bash
 vectorizer = TfidfVectorizer(max_features=5000)
 vectorizer
 
 # Fit the vectorizer on the training data and transform both X_train and X_test
 X_train_tfidf = vectorizer.fit_transform(X_train['Text'])
 X_test_tfidf = vectorizer.transform(X_test['Text'])
-LinearSVC Classifier
+```
+
+## LinearSVC Classifier
+
 initializes a LinearSVC model and trains it using the transformed training data (X_train_tfidf) and the labels (Y_train). The random state ensures consistent results.
 
+```bash
 clf = LinearSVC(random_state=0)
 clf.fit(X_train_tfidf, Y_train)
-Making Prediction with classifier:
+```
+**Making Prediction with classifier:**
 
+```bash
 Y_pred = clf.predict(X_test_tfidf)
-Evaluating Model Accuracy
+```
+
+## Evaluating Model Accuracy
+```bash
 accuracy = accuracy_score(Y_test, Y_pred)
 report = classification_report(Y_test, Y_pred)
 print("Accuracy:", accuracy)
-Output: Accuracy: 0.9984848484848485
+```
+**Output:** Accuracy: 0.9984848484848485
 
 ##Classification Report
 
-This classification report shows that the model did a perfect job at telling "Fake" from "Real." Here’s what each part means:
+This classification report shows that the model did a perfect job at telling "Fake" from "Real." Hereâ€™s what each part means:
 
-Precision: For both "Fake" and "Real" categories, precision is 1.00, meaning every time the model labeled something as "Fake" or "Real," it was correct.
-Recall: Recall is also 1.00 for both categories, so the model found every "Fake" and every "Real" instance without missing any.
-F1-Score: This combines precision and recall, and since both are perfect, the F1-score is 1.00 as well, showing excellent balance.
-Support: There were 1,017 "Fake" cases and 963 "Real" cases, giving a total of 1,980 samples.
+- Precision: For both "Fake" and "Real" categories, precision is 1.00, meaning every time the model labeled something as "Fake" or "Real," it was correct.
+- Recall: Recall is also 1.00 for both categories, so the model found every "Fake" and every "Real" instance without missing any.
+- F1-Score: This combines precision and recall, and since both are perfect, the F1-score is 1.00 as well, showing excellent balance.
+- Support: There were 1,017 "Fake" cases and 963 "Real" cases, giving a total of 1,980 samples.
+ ```bash
 import seaborn as sns
 import matplotlib.pyplot as plt
 
@@ -125,15 +154,18 @@ sns.heatmap(report_df.iloc[:-1, :].T, annot=True, cmap='Blues', fmt='.2f', cbar=
 plt.title('Classification Report - Lung Cancer Prediction')
 plt.savefig('Lr report.png')
 plt.show()
-cr
+```
+![cr](Image/Lr%20report.png) 
 
-Confusion Matrix:
+## Confusion Matrix:
 The confusion matrix provides a look at how well the model correctly identified "Fake" and "Real" cases:
 
-True Positives (1015): The model correctly classified 1,015 "Fake" cases as "Fake."
-True Negatives (962): It also correctly identified 962 "Real" cases as "Real."
-False Positives (2): There were 2 instances where the model incorrectly labeled "Real" cases as "Fake."
-False Negatives (1): Only 1 "Fake" case was mislabeled as "Real.".
+- True Positives (1015): The model correctly classified 1,015 "Fake" cases as "Fake."
+- True Negatives (962): It also correctly identified 962 "Real" cases as "Real."
+- False Positives (2): There were 2 instances where the model incorrectly labeled "Real" cases as "Fake."
+- False Negatives (1): Only 1 "Fake" case was mislabeled as "Real.".
+
+```bash
 # Generate confusion matrix
 from sklearn.metrics import confusion_matrix
 import seaborn as sns
@@ -145,25 +177,26 @@ plt.xlabel('Predicted')
 plt.ylabel('True')
 plt.savefig('confusion_matrix.png')
 plt.show()
-CM
+```
+![CM](Image/confusion_matrix.png)
 
-How to Use
-Clone this repository:
+## How to Use
+1. **Clone this repository:**
+```bash
 git@github.com:TaskiyaMridha/Fake_news_Classification.git
-Navigate to the project directory:
+```
+2. **Navigate to the project directory:**
+```bash
 cd fake_news_detection
-Install dependancies:
+```
+3. **Install dependancies:**
+```bash
 pip install -r requirements.txt
-Run the notebook or script to load the dataset, train the model, and evaluate its performance.
-Future Improvements
-Experiment with additional models like Random Forest or Naive Bayes.
-Use more complex NLP techniques, like word embeddings, to improve classification accuracy.
-Explore ensemble models for potential accuracy improvements.
+```
+4. **Run the notebook or script to load the dataset, train the model, and evaluate its performance.**
 
-On Mon, 16 Jun 2025 at 12:44, Sravani Sanjivannagari <sravanisanjivannagari@gmail.com> wrote:
-https://colab.research.google.com/github/TaskiyaMridha/Fake_news_Classification/blob/main/Fake__news_classification.ipynb
+## Future Improvements
 
-## 👤 Author
-**Name:** Sravani  
-**Email:** n190121@rguktn.ac.in
-
+* Experiment with additional models like Random Forest or Naive Bayes.
+* Use more complex NLP techniques, like word embeddings, to improve classification accuracy.
+* Explore ensemble models for potential accuracy improvements.
